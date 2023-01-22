@@ -65,7 +65,7 @@ class Ui(QtWidgets.QMainWindow):
             baca = os.listdir(self.path)
             self.data_calibrate = []
             for file in baca:
-                if file.endswith(".jpeg") or file.endswith(".jpg") or file.endswith(".png") or file.endswith(
+                if file.endswith(".jpeg") or file.endswith(".JPG") or file.endswith(".png") or file.endswith(
                         ".bmp") or file.endswith(".gif") or file.endswith(".webp") or file.endswith(
                     ".psd") or file.endswith(
                     ".tfif") or file.endswith(".raw") or file.endswith(".pdf") or file.endswith(
@@ -197,10 +197,10 @@ class Ui(QtWidgets.QMainWindow):
 
         for fname in os.listdir(self.path):
             # Read the image
-            print("asdasdasd")
             print(fname)
             img = cv.imread(self.path + "/" +fname)
-
+            # resize the image 1/4 the size
+            img = cv.resize(img, (0, 0), fx=0.25, fy=0.25)
             # Convert to grayscale
             gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
             # cv.imshow('img', gray)
@@ -216,8 +216,13 @@ class Ui(QtWidgets.QMainWindow):
 
                 # Draw and display the corners
                 cv.drawChessboardCorners(img, (rows, cols), corners2, ret)
-                # cv.imshow('img', img)
-                cv.waitKey(500)
+                cv.imshow('img', img)
+
+                #save the img to folder "hasilKalib"
+                cv.imwrite("hasilKalib/" + fname, img)
+                print("Gambar " + fname + " berhasil disimpan")
+
+                # cv.waitKey(500)
 
         # Calibrate the camera
         ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
