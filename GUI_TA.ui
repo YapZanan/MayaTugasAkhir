@@ -263,36 +263,6 @@
         <property name="title">
          <string>GroupBox</string>
         </property>
-        <widget class="QWidget" name="gridLayoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>180</x>
-           <y>30</y>
-           <width>271</width>
-           <height>61</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="QPushButton" name="pushButton_Start_Undistorted">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>12</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Start Undistortion</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
         <widget class="QSplitter" name="splitter">
          <property name="geometry">
           <rect>
@@ -312,12 +282,30 @@
          </widget>
          <widget class="QLineEdit" name="lineEdit_Rows"/>
         </widget>
+        <widget class="QPushButton" name="pushButton_Start_Calibration">
+         <property name="geometry">
+          <rect>
+           <x>180</x>
+           <y>40</y>
+           <width>151</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Start Calibration</string>
+         </property>
+        </widget>
         <widget class="QSplitter" name="splitter_2">
          <property name="geometry">
           <rect>
            <x>10</x>
            <y>70</y>
-           <width>117</width>
+           <width>120</width>
            <height>19</height>
           </rect>
          </property>
@@ -326,10 +314,34 @@
          </property>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Cols :</string>
+           <string>Cols  :</string>
           </property>
          </widget>
          <widget class="QLineEdit" name="lineEdit_Cols"/>
+        </widget>
+        <widget class="QPushButton" name="pushButton_Start_Undistorted">
+         <property name="geometry">
+          <rect>
+           <x>340</x>
+           <y>40</y>
+           <width>151</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Start Undistortion</string>
+         </property>
         </widget>
        </widget>
       </item>
