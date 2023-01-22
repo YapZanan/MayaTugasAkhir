@@ -143,7 +143,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="label_Proses">
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>
@@ -190,7 +190,18 @@
         </widget>
        </item>
        <item>
-        <widget class="QTableWidget" name="tableWidget_File_Undistortion"/>
+        <widget class="QTableWidget" name="tableWidget_File_Undistortion">
+         <column>
+          <property name="text">
+           <string>Hasil calibration</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Hasil Undistortion</string>
+          </property>
+         </column>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="pushButton_Save">
@@ -300,25 +311,6 @@
           <string>Start Calibration</string>
          </property>
         </widget>
-        <widget class="QSplitter" name="splitter_2">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>70</y>
-           <width>120</width>
-           <height>19</height>
-          </rect>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Cols  :</string>
-          </property>
-         </widget>
-         <widget class="QLineEdit" name="lineEdit_Cols"/>
-        </widget>
         <widget class="QPushButton" name="pushButton_Start_Undistorted">
          <property name="geometry">
           <rect>
@@ -342,6 +334,25 @@
          <property name="text">
           <string>Start Undistortion</string>
          </property>
+        </widget>
+        <widget class="QSplitter" name="splitter_2">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>70</y>
+           <width>120</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Cols  :</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="lineEdit_Cols"/>
         </widget>
        </widget>
       </item>

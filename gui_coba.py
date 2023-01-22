@@ -24,7 +24,7 @@ class Ui(QtWidgets.QMainWindow):
         self.pushButton_Load_File_Calibrate.clicked.connect(self.load_file_calibrate_to_table)
         self.pushButton_Load_File_Distorted.clicked.connect(self.load_file_distorted_to_table)
         self.tableWidget_Tabel_File.clicked.connect(self.load_image_to_label_distorsi)
-        # self.tableWidget_Tabel_File_Undistortion.clicked.connect(self.load_image_to_label_undistorsi)
+        self.tableWidget_File_Undistortion.clicked.connect(self.load_image_to_label_undistortion)
         self.pushButton_Start_Calibration.clicked.connect(self.load_file_hasilKalib_to_table)
         self.pushButton_Delete_File.clicked.connect(self.load_image_delete)
         # self.lineEdit_Rows.clicked.connect(self.input_rows)
@@ -231,13 +231,34 @@ class Ui(QtWidgets.QMainWindow):
         # self.undistort_image(ret, mtx, dist, rvecs, tvecs)
         # return ret, mtx, dist, rvecs, tvecs
     def panggil_hasilKalib(self):
-        self.path
+        path3 =  "hasilKalib"
+        return path3
+
+    def get_selected_file_path2(self):
+        row = self.tableWidget_Tabel_File.currentRow()
+        cola = self.tableWidget_Tabel_File.currentColumn()
+        data = self.tableWidget_Tabel_File.item(row, cola)
+        print(row)
+        print(cola)
+        text = data.text()
+        print("fdsfdsf")
+        print(self.path2)
+        print("asdasdsad")
+        print(text)
+        if cola == 0:
+            path_lengkap = self.path + "/" + str(text)
+            print(self.path2)
+        else:
+            path_lengkap = self.path2 + "/" + str(text)
+        print(path_lengkap)
+        return path_lengkap
+
     def load_file_hasilKalib_to_table(self):
-        self.path2 = self.select_folder()
-        if self.path2 == '':
+        self.path3 = self.panggil_hasilKalib()
+        if self.path3 == '':
             print("No file selected")
         else:
-            baca = os.listdir(self.path2)
+            baca = os.listdir(self.path3)
             self.data_distorted = []
             for file in baca:
                 if file.endswith(".jpeg") or file.endswith(".jpg") or file.endswith(".png") or file.endswith(
@@ -253,6 +274,15 @@ class Ui(QtWidgets.QMainWindow):
                 self.tableWidget_Tabel_File.setItem(i, 1, QTableWidgetItem(str(self.data_distorted[i])))
             self.label_Camera.clear()
 
+    def thread_load2(self):
+        t1 = Thread(target=self.load_file_hasilKalib_to_table)
+        t1.start()
+
+    def load_image_to_label_undistortion(self):
+        path = self.get_selected_file_path2()
+        print(path)
+        self.label_Proses.setPixmap(QPixmap(path))
+        self.label_Proses.setScaledContents(True)
 
     def undistort_image(self):
         # Load the camera calibration parameters
