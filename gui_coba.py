@@ -203,24 +203,25 @@ class Ui(QtWidgets.QMainWindow):
 
             # Convert to grayscale
             gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+            # cv.imshow('img', gray)
 
-        #     # Find the chess board corners
-        #     ret, corners = cv.findChessboardCorners(gray, (int(rows), int(cols)), None)
-        #
-        #     # If found, add object points, image points
-        #     if ret:
-        #         objpoints.append(objp)
-        #         corners2 = cv.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
-        #         imgpoints.append(corners2)
-        #
-        #         # Draw and display the corners
-        #         cv.drawChessboardCorners(img, (rows, cols), corners2, ret)
-        #         # cv.imshow('img', img)
-        #         cv.waitKey(500)
-        #
-        # # Calibrate the camera
-        # ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
-        # np.savez("matriks_calibration.npz", mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
+            # Find the chess board corners
+            ret, corners = cv.findChessboardCorners(gray, (int(rows), int(cols)), None)
+
+            # If found, add object points, image points
+            if ret:
+                objpoints.append(objp)
+                corners2 = cv.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
+                imgpoints.append(corners2)
+
+                # Draw and display the corners
+                cv.drawChessboardCorners(img, (rows, cols), corners2, ret)
+                # cv.imshow('img', img)
+                cv.waitKey(500)
+
+        # Calibrate the camera
+        ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
+        np.savez("matriks_calibration.npz", mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
         #
         #
         # self.undistort_image(ret, mtx, dist, rvecs, tvecs)
