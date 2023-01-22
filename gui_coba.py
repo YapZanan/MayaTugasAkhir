@@ -28,15 +28,11 @@ class Ui(QtWidgets.QMainWindow):
         self.pushButton_Load_File_Distorted.clicked.connect(self.load_file_distorted_to_table)
         self.tableWidget_Tabel_File.clicked.connect(self.load_image_to_label_distorsi)
         self.tableWidget_File_Undistortion.clicked.connect(self.load_image_to_label_undistortion)
-        # self.pushButton_Start_Calibration.clicked.connect(self.load_file_hasilKalib_to_table)
         self.pushButton_Delete_File.clicked.connect(self.load_image_delete)
-        # self.lineEdit_Rows.clicked.connect(self.input_rows)
-        # self.lineEdit_Cols.clicked.connect(self.input_cols)
 
         self.pushButton_Start_Calibration.clicked.connect(self.calibration)
         self.pushButton_Start_Undistorted.clicked.connect(self.undistort_image)
-        # self.listWidget_Progress.clicked.connect(self.load_file_to_listWidget)
-        self.pushButton_Save.clicked.connect(self.save_file)
+
 
     def select_folder(self):
         path = QFileDialog.getExistingDirectory(self, 'Load File')
@@ -318,6 +314,7 @@ class Ui(QtWidgets.QMainWindow):
 
             # undistort
             dst = cv.undistort(img, mtx, dist, None, newcameramtx)
+            cv.imshow('img', dst)
             cv.imwrite("hasilUndistort/" + fname, dst)
 
             self.load_file_hasilUndistort_to_table()
