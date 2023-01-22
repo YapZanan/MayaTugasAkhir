@@ -25,6 +25,7 @@ class Ui(QtWidgets.QMainWindow):
         self.pushButton_Load_File_Distorted.clicked.connect(self.load_file_distorted_to_table)
         self.tableWidget_Tabel_File.clicked.connect(self.load_image_to_label_distorsi)
         # self.tableWidget_Tabel_File_Undistortion.clicked.connect(self.load_image_to_label_undistorsi)
+        self.pushButton_Start_Calibration.clicked.connect(self.load_file_hasilKalib_to_table)
         self.pushButton_Delete_File.clicked.connect(self.load_image_delete)
         # self.lineEdit_Rows.clicked.connect(self.input_rows)
         # self.lineEdit_Cols.clicked.connect(self.input_cols)
@@ -231,6 +232,29 @@ class Ui(QtWidgets.QMainWindow):
         #
         # self.undistort_image(ret, mtx, dist, rvecs, tvecs)
         # return ret, mtx, dist, rvecs, tvecs
+    def panggil_hasilKalib(self):
+        self.path
+    def load_file_hasilKalib_to_table(self):
+        self.path2 = self.select_folder()
+        if self.path2 == '':
+            print("No file selected")
+        else:
+            baca = os.listdir(self.path2)
+            self.data_distorted = []
+            for file in baca:
+                if file.endswith(".jpeg") or file.endswith(".jpg") or file.endswith(".png") or file.endswith(
+                        ".bmp") or file.endswith(".gif") or file.endswith(".webp") or file.endswith(
+                    ".psd") or file.endswith(
+                    ".tfif") or file.endswith(".raw") or file.endswith(".pdf") or file.endswith(
+                    ".esp") or file.endswith(
+                    ".heif") or file.endswith(".ai"):
+                    self.data_distorted.append(file.replace(".jpeg", ""))
+            total = len(self.data_distorted)
+            self.tableWidget_Tabel_File.setRowCount(total)
+            for i in range(total):
+                self.tableWidget_Tabel_File.setItem(i, 1, QTableWidgetItem(str(self.data_distorted[i])))
+            self.label_Camera.clear()
+
 
     def undistort_image(self, img, ret, mtx, dist, rvecs, tvecs):
         # Load the camera calibration parameters
