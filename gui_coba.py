@@ -79,10 +79,6 @@ class Ui(QtWidgets.QMainWindow):
                 self.tableWidget_Tabel_File.setItem(i, 0, QTableWidgetItem(str(self.data_calibrate[i])))
             self.label_Camera.clear()
 
-    def thread_load(self):
-        t1 = Thread(target=self.load_file_calibrate_to_table)
-        t1.start()
-
     def load_file_distorted_to_table(self):
         self.path2 = self.select_folder()
         if self.path2 == '':
@@ -323,16 +319,6 @@ class Ui(QtWidgets.QMainWindow):
             x, y, w, h = roi
             dst = dst[y:y + h, x:x + w]
 
-    def start_process(self, n):
-        self.process_undistorted()
-
-        self.pushButton_Start.clicked.connect(lambda status, n_size=n: self.run(n_size))
-        for i in range(n):
-            time.sleep(0.01)
-            self.progressBar.setValue(i + 1)
-
-    # def load_file_to_listWidget(self):
-    #   print("")
 
     def save_file(self):
         saveFile = QtGui.QAction("&Save File", self)
