@@ -28,11 +28,11 @@ class Ui(QtWidgets.QMainWindow):
         self.pushButton_Delete_File.clicked.connect(self.load_image_delete)
         # self.lineEdit_Rows.clicked.connect(self.input_rows)
         # self.lineEdit_Cols.clicked.connect(self.input_cols)
-        self.pushButton_Start_Undistorted.clicked.connect(self.calibration)
+
+        self.pushButton_Start_Calibration.clicked.connect(self.calibration)
+        self.pushButton_Start_Undistorted.clicked.connect(self.undistort_image)
         # self.listWidget_Progress.clicked.connect(self.load_file_to_listWidget)
         self.pushButton_Save.clicked.connect(self.save_file)
-
-
 
     def select_folder(self):
         path = QFileDialog.getExistingDirectory(self, 'Load File')
@@ -65,7 +65,7 @@ class Ui(QtWidgets.QMainWindow):
             baca = os.listdir(self.path)
             self.data_calibrate = []
             for file in baca:
-                if file.endswith(".jpeg") or file.endswith(".JPG") or file.endswith(".png") or file.endswith(
+                if file.endswith(".jpeg") or file.endswith(".JPG") or file.endswith(".jpg") or file.endswith(".png") or file.endswith(
                         ".bmp") or file.endswith(".gif") or file.endswith(".webp") or file.endswith(
                     ".psd") or file.endswith(
                     ".tfif") or file.endswith(".raw") or file.endswith(".pdf") or file.endswith(
@@ -90,7 +90,7 @@ class Ui(QtWidgets.QMainWindow):
             baca = os.listdir(self.path2)
             self.data_distorted = []
             for file in baca:
-                if file.endswith(".jpeg") or file.endswith(".jpg") or file.endswith(".png") or file.endswith(
+                if file.endswith(".jpeg") or file.endswith(".JPG") or file.endswith(".jpg") or file.endswith(".png") or file.endswith(
                         ".bmp") or file.endswith(".gif") or file.endswith(".webp") or file.endswith(
                     ".psd") or file.endswith(
                     ".tfif") or file.endswith(".raw") or file.endswith(".pdf") or file.endswith(
@@ -176,10 +176,8 @@ class Ui(QtWidgets.QMainWindow):
     #   rows = QtWidgets.QInputDialog.getInt()
 
     def calibration(self):
-        total = len(self.data_calibrate)
         cols = int(self.lineEdit_Rows.text())
         rows = int(self.lineEdit_Cols.text())
-
 
         # Set the termination criteria for the corner sub-pixel algorithm
         criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -198,7 +196,7 @@ class Ui(QtWidgets.QMainWindow):
         for fname in os.listdir(self.path):
             # Read the image
             print(fname)
-            img = cv.imread(self.path + "/" +fname)
+            img = cv.imread(self.path + "/" + fname)
             # resize the image 1/4 the size
             img = cv.resize(img, (0, 0), fx=0.25, fy=0.25)
             # Convert to grayscale
@@ -218,7 +216,7 @@ class Ui(QtWidgets.QMainWindow):
                 cv.drawChessboardCorners(img, (rows, cols), corners2, ret)
                 cv.imshow('img', img)
 
-                #save the img to folder "hasilKalib"
+                # save the img to folder "hasilKalib"
                 cv.imwrite("hasilKalib/" + fname, img)
                 print("Gambar " + fname + " berhasil disimpan")
 
@@ -232,27 +230,44 @@ class Ui(QtWidgets.QMainWindow):
         # self.undistort_image(ret, mtx, dist, rvecs, tvecs)
         # return ret, mtx, dist, rvecs, tvecs
 
-    def undistort_image(self, img, ret, mtx, dist, rvecs, tvecs):
+    def undistort_image(self):
         # Load the camera calibration parameters
-        # data = np.load("calibration.npz")
-        # mtx, dist = data["mtx"], data["dist"]
-        baca = os.listdir(self.path)
-        for file in baca:
-            print("sadasd")
+        data = np.load("matriks_calibration.npz")
+        mtx, dist = data["mtx"], data["dist"]
 
-        # Read an image
-        # img = cv.imread('bc.jpeg')
-            img = file
-            print(img)
+        for fname in os.listdir(self.path2):
+            print(fname)
+
+            # using mtx and dist, undistort the images
+            # img = cv.imread(self.path2 + "/" + fname)
             # h, w = img.shape[:2]
             # newcameramtx, roi = cv.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
-            #
-            # # undistort
             # dst = cv.undistort(img, mtx, dist, None, newcameramtx)
-            #
             # # crop the image
             # x, y, w, h = roi
             # dst = dst[y:y + h, x:x + w]
+            # cv.imwrite("hasilUndistort/" + fname, dst)
+            # print("Gambar " + fname + " berhasil disimpan")
+
+
+            # Read an image
+            img = cv.imread(self.path2 + "/" + fname)
+            # resize the image 1/4 the size
+            img = cv.resize(img, (0, 0), fx=0.25, fy=0.25)
+            # Convert to grayscale
+
+
+            # Undistort the image
+            h, w = img.shape[:2]
+            newcameramtx, roi = cv.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
+
+            # undistort
+            dst = cv.undistort(img, mtx, dist, None, newcameramtx)
+            cv.imwrite("hasilUndistort/" + fname, dst)
+
+            # crop the image
+            x, y, w, h = roi
+            dst = dst[y:y + h, x:x + w]
 
     def start_process(self, n):
         self.process_undistorted()
