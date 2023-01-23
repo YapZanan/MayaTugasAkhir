@@ -18,22 +18,21 @@ class Ui(QtWidgets.QMainWindow):
 
         self.path = None
         self.path2 = None
+
+        self.pathhasilKalib = "hasilKalib"
+        self.pathhasilUndistort = "hasilUndistort"
         self.data = None
         self.image = QImage()
 
         self.pushButton_Load_File_Calibrate.clicked.connect(self.load_file_calibrate_to_table)
         self.pushButton_Load_File_Distorted.clicked.connect(self.load_file_distorted_to_table)
         self.tableWidget_Tabel_File.clicked.connect(self.load_image_to_label_distorsi)
-        # self.tableWidget_Tabel_File_Undistortion.clicked.connect(self.load_image_to_label_undistorsi)
-        self.pushButton_Start_Calibration.clicked.connect(self.load_file_hasilKalib_to_table)
+        self.tableWidget_File_Undistortion.clicked.connect(self.load_image_to_label_undistortion)
         self.pushButton_Delete_File.clicked.connect(self.load_image_delete)
-        # self.lineEdit_Rows.clicked.connect(self.input_rows)
-        # self.lineEdit_Cols.clicked.connect(self.input_cols)
 
         self.pushButton_Start_Calibration.clicked.connect(self.calibration)
         self.pushButton_Start_Undistorted.clicked.connect(self.undistort_image)
-        # self.listWidget_Progress.clicked.connect(self.load_file_to_listWidget)
-        self.pushButton_Save.clicked.connect(self.save_file)
+
 
     def select_folder(self):
         path = QFileDialog.getExistingDirectory(self, 'Load File')
@@ -219,36 +218,68 @@ class Ui(QtWidgets.QMainWindow):
 
                 # cv.waitKey(500)
 
+
         # Calibrate the camera
         ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
         np.savez("matriks_calibration.npz", mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
+        self.load_file_hasilKalib_to_table()
+        print("hasil panggil")
         #
         #
         # self.undistort_image(ret, mtx, dist, rvecs, tvecs)
         # return ret, mtx, dist, rvecs, tvecs
-    def panggil_hasilKalib(self):
-        self.path
-    def load_file_hasilKalib_to_table(self):
-        self.path2 = self.select_folder()
-        if self.path2 == '':
-            print("No file selected")
-        else:
-            baca = os.listdir(self.path2)
-            self.data_distorted = []
-            for file in baca:
-                if file.endswith(".jpeg") or file.endswith(".jpg") or file.endswith(".png") or file.endswith(
-                        ".bmp") or file.endswith(".gif") or file.endswith(".webp") or file.endswith(
-                    ".psd") or file.endswith(
-                    ".tfif") or file.endswith(".raw") or file.endswith(".pdf") or file.endswith(
-                    ".esp") or file.endswith(
-                    ".heif") or file.endswith(".ai"):
-                    self.data_distorted.append(file.replace(".jpeg", ""))
-            total = len(self.data_distorted)
-            self.tableWidget_Tabel_File.setRowCount(total)
-            for i in range(total):
-                self.tableWidget_Tabel_File.setItem(i, 1, QTableWidgetItem(str(self.data_distorted[i])))
-            self.label_Camera.clear()
 
+    def get_selected_file_path2(self):
+        row = self.tableWidget_File_Undistortion.currentRow()
+        cola = self.tableWidget_File_Undistortion.currentColumn()
+        data = self.tableWidget_File_Undistortion.item(row, cola)
+        print(row)
+        print(cola)
+        text = data.text()
+        print("fdsfdsf")
+        print(self.path2)
+        print("asdasdsad")
+        print(text)
+        if cola == 0:
+            path_lengkap = self.pathhasilKalib + "/" + str(text)
+            print(self.path2)
+        else:
+            path_lengkap = self.pathhasilUndistort + "/" + str(text)
+        print(path_lengkap)
+        return path_lengkap
+
+    def load_file_hasilKalib_to_table(self):
+        print("asdasd")
+        baca1 = os.listdir('hasilKalib')
+        self.data_hasil_calibration = []
+        for file in baca1:
+            print(file)
+            # cv.imshow(baca + "/" + file)
+            print(('hasilKalib' + "/" + file))
+            # cv.imshow(('hasilKalib' + "/" + file))
+            if file.endswith(".jpeg") or file.endswith(".jpg") or file.endswith(".JPG") or file.endswith(".png") or file.endswith(
+                 ".bmp") or file.endswith(".gif") or file.endswith(".webp") or file.endswith(
+                 ".psd") or file.endswith(
+                 ".tfif") or file.endswith(".raw") or file.endswith(".pdf") or file.endswith(
+                 ".esp") or file.endswith(
+                 ".heif") or file.endswith(".ai"):
+                self.data_hasil_calibration.append(file.replace(".jpeg", ""))
+                print("berhasil load")
+        total = len(self.data_hasil_calibration)
+        self.tableWidget_File_Undistortion.setRowCount(total)
+        for i in range(total):
+            self.tableWidget_File_Undistortion.setItem(i, 0, QTableWidgetItem(str(self.data_hasil_calibration[i])))
+        self.label_Proses.clear()
+
+    def thread_load2(self):
+        t1 = Thread(target=self.load_file_hasilKalib_to_table)
+        t1.start()
+
+    def load_image_to_label_undistortion(self):
+        path = self.get_selected_file_path2()
+        print(path)
+        self.label_Proses.setPixmap(QPixmap(path))
+        self.label_Proses.setScaledContents(True)
 
     def undistort_image(self):
         # Load the camera calibration parameters
@@ -283,27 +314,47 @@ class Ui(QtWidgets.QMainWindow):
 
             # undistort
             dst = cv.undistort(img, mtx, dist, None, newcameramtx)
+            cv.imshow('img', dst)
             cv.imwrite("hasilUndistort/" + fname, dst)
 
+            self.load_file_hasilUndistort_to_table()
             # crop the image
             x, y, w, h = roi
             dst = dst[y:y + h, x:x + w]
 
+    def load_file_hasilUndistort_to_table(self):
+        print("asdasd")
+        baca1 = os.listdir('hasilUndistort')
+        self.data_hasil_undistort = []
+        for file in baca1:
+            print(file)
+            # cv.imshow(baca + "/" + file)
+            print(('hasilUndistort' + "/" + file))
+            # cv.imshow(('hasilKalib' + "/" + file))
+            if file.endswith(".jpeg") or file.endswith(".jpg") or file.endswith(".JPG") or file.endswith(".png") or file.endswith(
+                 ".bmp") or file.endswith(".gif") or file.endswith(".webp") or file.endswith(
+                 ".psd") or file.endswith(
+                 ".tfif") or file.endswith(".raw") or file.endswith(".pdf") or file.endswith(
+                 ".esp") or file.endswith(
+                 ".heif") or file.endswith(".ai"):
+                self.data_hasil_undistort.append(file.replace(".jpeg", ""))
+                print("berhasil load")
+        total = len(self.data_hasil_undistort)
+        self.tableWidget_File_Undistortion.setRowCount(total)
+        for i in range(total):
+            self.tableWidget_File_Undistortion.setItem(i, 1, QTableWidgetItem(str(self.data_hasil_undistort[i])))
+        self.label_Proses.clear()
 
-    def save_file(self):
-        saveFile = QtGui.QAction("&Save File", self)
-        saveFile.setShortcut("Ctrl+S")
-        saveFile.setStatusTip('Save File')
-        saveFile.triggered.connect(self.file_save)
+    def thread_load2(self):
+        t1 = Thread(target=self.load_file_hasilUndistort_to_table)
+        t1.start()
 
-        fileMenu.addAction(saveFile)
+    def load_image_to_label_undistortion(self):
+        path = self.get_selected_file_path2()
+        print(path)
+        self.label_Proses.setPixmap(QPixmap(path))
+        self.label_Proses.setScaledContents(True)
 
-    def file_save(self):
-        name = QtGui.QFileDialog.getSaveFileName(self, 'Save File')
-        file = open(name, 'w')
-        text = self.textEdit.toPlainText()
-        file.write(text)
-        file.close()
 
 
 if __name__ == "__main__":
