@@ -1,14 +1,11 @@
 import os
 import cv2 as cv
-import time
 import numpy as np
-from datetime import datetime
 from threading import Thread
 from PyQt5 import QtWidgets, uic
 import sys
 from PyQt5.QtGui import QPixmap, QImage
-from PyQt5.QtWidgets import QTableWidgetItem, QFileDialog, QLineEdit
-from PyQt5.uic.properties import QtGui
+from PyQt5.QtWidgets import QTableWidgetItem, QFileDialog
 
 
 class Ui(QtWidgets.QMainWindow):
@@ -45,9 +42,7 @@ class Ui(QtWidgets.QMainWindow):
         print(row)
         print(cola)
         text = data.text()
-        print("fdsfdsf")
         print(self.path2)
-        print("asdasdsad")
         print(text)
         if cola == 0:
             path_lengkap = self.path + "/" + str(text)
@@ -161,15 +156,6 @@ class Ui(QtWidgets.QMainWindow):
                 except:
                     print("Gagal menghapus file")
 
-    # def show_progress(self):
-    # n = self.data
-
-    # self.progressBar = ProgressBar_Progress()
-    # self.progressBar.setMinimum(0)
-    # self.progressBar.setMaximum(n)
-
-    # def input_rows(self):
-    #   rows = QtWidgets.QInputDialog.getInt()
 
     def calibration(self):
         cols = int(self.lineEdit_Rows.text())
@@ -186,8 +172,6 @@ class Ui(QtWidgets.QMainWindow):
         objpoints = []  # 3d points in real world space
         imgpoints = []  # 2d points in image plane
 
-        # Get the path of all the images
-        # images = glob.glob('/Users/asus/PycharmProjects/main/Data_Set/Data_Chessboard/DSC*.jpg')
 
         for fname in os.listdir(self.path):
             # Read the image
@@ -216,18 +200,12 @@ class Ui(QtWidgets.QMainWindow):
                 cv.imwrite("hasilKalib/" + fname, img)
                 print("Gambar " + fname + " berhasil disimpan")
 
-                # cv.waitKey(500)
-
-
         # Calibrate the camera
         ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
         np.savez("matriks_calibration.npz", mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
         self.load_file_hasilKalib_to_table()
         print("hasil panggil")
-        #
-        #
-        # self.undistort_image(ret, mtx, dist, rvecs, tvecs)
-        # return ret, mtx, dist, rvecs, tvecs
+
 
     def get_selected_file_path2(self):
         row = self.tableWidget_File_Undistortion.currentRow()
@@ -236,9 +214,7 @@ class Ui(QtWidgets.QMainWindow):
         print(row)
         print(cola)
         text = data.text()
-        print("fdsfdsf")
         print(self.path2)
-        print("asdasdsad")
         print(text)
         if cola == 0:
             path_lengkap = self.pathhasilKalib + "/" + str(text)
@@ -288,25 +264,10 @@ class Ui(QtWidgets.QMainWindow):
 
         for fname in os.listdir(self.path2):
             print(fname)
-
-            # using mtx and dist, undistort the images
-            # img = cv.imread(self.path2 + "/" + fname)
-            # h, w = img.shape[:2]
-            # newcameramtx, roi = cv.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
-            # dst = cv.undistort(img, mtx, dist, None, newcameramtx)
-            # # crop the image
-            # x, y, w, h = roi
-            # dst = dst[y:y + h, x:x + w]
-            # cv.imwrite("hasilUndistort/" + fname, dst)
-            # print("Gambar " + fname + " berhasil disimpan")
-
-
             # Read an image
             img = cv.imread(self.path2 + "/" + fname)
             # resize the image 1/4 the size
             img = cv.resize(img, (0, 0), fx=0.25, fy=0.25)
-            # Convert to grayscale
-
 
             # Undistort the image
             h, w = img.shape[:2]
@@ -318,9 +279,11 @@ class Ui(QtWidgets.QMainWindow):
             cv.imwrite("hasilUndistort/" + fname, dst)
 
             self.load_file_hasilUndistort_to_table()
+
             # crop the image
-            x, y, w, h = roi
-            dst = dst[y:y + h, x:x + w]
+            # x, y, w, h = roi
+            # dst = dst[y:y + h, x:x + w]
+            # cv.imwrite('crop.png', dst)
 
     def load_file_hasilUndistort_to_table(self):
         print("asdasd")
@@ -345,7 +308,7 @@ class Ui(QtWidgets.QMainWindow):
             self.tableWidget_File_Undistortion.setItem(i, 1, QTableWidgetItem(str(self.data_hasil_undistort[i])))
         self.label_Proses.clear()
 
-    def thread_load2(self):
+    def thread_load3(self):
         t1 = Thread(target=self.load_file_hasilUndistort_to_table)
         t1.start()
 
@@ -357,12 +320,13 @@ class Ui(QtWidgets.QMainWindow):
 
 
 
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = Ui()
-    window.setWindowTitle('Distortion Correction')
     widget = QtWidgets.QStackedWidget()
     widget.addWidget(window)
+    widget.setWindowTitle("Distortion Correction")
     widget.show()
     try:
         sys.exit(app.exec_())
