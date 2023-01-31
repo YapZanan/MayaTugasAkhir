@@ -106,8 +106,18 @@ class Ui(QtWidgets.QMainWindow):
     def load_image_to_label_distorsi(self):
         path = self.get_selected_file_path()
         print(path)
-        self.label_Camera.setPixmap(QPixmap(path))
-        self.label_Camera.setScaledContents(True)
+        image = QPixmap(path)
+        aspect_ratio = image.width() / image.height()
+        label_width = self.label_Camera.width()
+        label_height = self.label_Camera.height()
+        if aspect_ratio > 1:
+            image = image.scaledToWidth(label_width)
+        else:
+            image = image.scaledToHeight(label_height)
+        self.label_Camera.setPixmap(image)
+
+    # def resizeEvent(self, event):
+    #     self.load_image_to_label_distorsi()
 
     def load_image_delete(self):
         selected_rows = self.tableWidget_Tabel_File.selectedIndexes()
@@ -276,10 +286,23 @@ class Ui(QtWidgets.QMainWindow):
         t1.start()
 
     def load_image_to_label_undistortion(self):
-        path = self.get_selected_file_path2()
+        path = self.get_selected_file_path()
         print(path)
-        self.label_Proses.setPixmap(QPixmap(path))
-        self.label_Proses.setScaledContents(True)
+        image = QPixmap(path)
+        aspect_ratio = image.width() / image.height()
+        label_width = self.label_Camera.width()
+        label_height = self.label_Camera.height()
+        if aspect_ratio > 1:
+            image = image.scaledToWidth(label_width)
+        else:
+            image = image.scaledToHeight(label_height)
+        self.label_Proses.setsetPixmap(image)
+
+    # def load_image_to_label_undistortion(self):
+    #     path = self.get_selected_file_path2()
+    #     print(path)
+    #     self.label_Proses.setPixmap(QPixmap(path))
+    #     self.label_Proses.setScaledContents(True)
 
     def undistort_image(self):
         # Load the camera calibration parameters
@@ -349,11 +372,11 @@ class Ui(QtWidgets.QMainWindow):
         t1 = Thread(target=self.load_file_hasilUndistort_to_table)
         t1.start()
 
-    def load_image_to_label_undistortion(self):
-        path = self.get_selected_file_path2()
-        print(path)
-        self.label_Proses.setPixmap(QPixmap(path))
-        self.label_Proses.setScaledContents(True)
+    # def load_image_to_label_undistortion(self):
+    #     path = self.get_selected_file_path2()
+    #     print(path)
+    #     self.label_Proses.setPixmap(QPixmap(path))
+    #     self.label_Proses.setScaledContents(True)
 
 
 
